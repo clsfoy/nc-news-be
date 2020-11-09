@@ -1,5 +1,5 @@
 
-const { createTopicReference } = require('../db/utils/data-manipulation')
+const { createTopicReference } = require('./data-manipulation')
 
 describe('Testing article reference', () => {
     test('returns an empty object when passed an empty array', () => {
@@ -7,10 +7,10 @@ describe('Testing article reference', () => {
     })
     test('returns new object with topic referencing slug', () => {
         
-        const input = [{
+        const input = {
             description: 'The man, the Mitch, the legend',
             slug: 'mitch',
-        }]
+        }
         const expected = {
             topic: 'mitch'
         }
