@@ -23,12 +23,11 @@ exports.seed = function (knex) {
       return knex("topics").insert(topicData).returning("*");
     })
     .then((topicRows) => {
-      console.log("adding topics");
       return knex("users").insert(userData).returning("*");
     })
     .then((userRows) => {
       const formattedArticleData = dateFormatter(articleData);
-      console.log("adding articles");
+
       return knex("articles").insert(formattedArticleData).returning("*");
     })
     .then((articleRows) => {
