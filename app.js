@@ -8,7 +8,6 @@ const {
   handleInvalidRoutes,
 } = require("./controllers/error-handling");
 
-console.log("in app");
 app.use(express.json());
 app.use("/api", apiRouter);
 app.all("/*", handleInvalidRoutes);

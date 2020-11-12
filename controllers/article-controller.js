@@ -10,7 +10,6 @@ const {
 } = require("../models/article-models");
 
 const getArticleById = (req, res, next) => {
-  console.log("inside article controller");
   const articleId = req.params.article_id;
 
   fetchArticleById(articleId)

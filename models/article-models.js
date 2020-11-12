@@ -114,7 +114,6 @@ const checkArticleExists = (articleId) => {
 };
 
 const uploadNewArticle = (body) => {
-  console.log(body);
   return connection.insert(body).into("articles").returning("*");
 };
 
