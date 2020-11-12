@@ -10,7 +10,16 @@ describe("/api", () => {
   afterAll(() => {
     return connection.destroy();
   });
-
+  //API
+  test("GET responds with status 200 and all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body: { apiEndPoints } }) => {
+        expect(apiEndPoints).toEqual(expect.any(Object));
+      });
+  });
+  //TOPICS
   describe("/api/topics", () => {
     test("GET responds with array of topics objects and status 200", () => {
       return request(app)
@@ -50,13 +59,13 @@ describe("/api", () => {
       return Promise.all(requestPromises);
     });
   });
-
-  describe("api/users/", () => {
+  //USERS
+  describe("api/users", () => {
     test("INVALID METHODS respond with status 405", () => {
       const methods = ["delete", "patch"];
       const requestPromises = methods.map((method) => {
         return request(app)
-          [method]("/api/users")
+          [method]("/api/users/weegembump")
           .expect(405)
           .then(({ body }) => {
             expect(body.msg).toBe("Oops...invalid method");
@@ -90,10 +99,10 @@ describe("/api", () => {
       });
     });
   });
-
+  //ARTICLES
   describe("/api/articles", () => {
     describe("/api/articles/:article_id", () => {
-      test.only("GET responds with article object and status 200", () => {
+      test("GET responds with article object and status 200", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
@@ -167,9 +176,7 @@ describe("/api", () => {
         return request(app)
           .delete("/api/articles/1")
           .expect(204)
-          .then((response) => {
-            console.log(response.status);
-          });
+          .then((response) => {});
       });
 
       test("DELETE removes any comments with corresponding article ID", () => {
@@ -210,14 +217,39 @@ describe("/api", () => {
           });
       });
 
-      test.only("GET responds with status 200 sorted by comment_id asc", () => {
+      test("GET responds with status 200 sorted by comment_id asc", () => {
         return request(app)
-          .get("/api/articles/3/comments?sort_by=comment_id&order=asc")
+          .get("/api/articles/3/comments?sort_by=comment_id&order=asc&limit=3")
           .expect(200)
           .then((response) => {
             expect(response.body.comments).toBeSortedBy("comment_id", "asc");
+            expect(response.body.comments.length).toBe(3);
           });
       });
+
+      test("GET responds with 200 and comments starting at specified page number", () => {
+        return request(app)
+          .get(
+            "/api/articles/1/comments?limit=3&p=2&sort_by=comment_id&order=asc"
+          )
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments.length).toBe(3);
+          });
+      });
+
+      test("GET responds with status 400 when article_id is not a number", () => {
+        return request(app)
+          .get("/api/articles/notanumber/comments")
+          .expect(400)
+          .then((response) => {
+            expect(response.body).toEqual({
+              status: 400,
+              msg: "Bad Request",
+            });
+          });
+      });
+
       test("POST responds with status 201 and new comment", () => {
         return request(app)
           .post("/api/articles/2/comments")
@@ -268,7 +300,41 @@ describe("/api", () => {
             const allArticlesHaveCommentCount = articles.every((article) => {
               return article.hasOwnProperty("comment_count");
             });
+            expect(articles.length).toBe(10);
             expect(allArticlesHaveCommentCount).toBe(true);
+          });
+      });
+
+      test("GET responds with status 200 and array of article objects from page 3 limited to 5", () => {
+        return request(app)
+          .get("/api/articles?limit=5&p=1&sort_by=article_id&order=asc")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(Array.isArray(articles)).toBe(true);
+            const allArticlesHaveCommentCount = articles.every((article) => {
+              return article.hasOwnProperty("comment_count");
+            });
+
+            expect(articles.length).toBe(5);
+            expect(articles[0].article_id).toBe(1);
+            expect(articles[1].article_id).toBe(2);
+            expect(articles[2].article_id).toBe(3);
+            expect(articles[3].article_id).toBe(4);
+            expect(articles[4].article_id).toBe(5);
+            expect(allArticlesHaveCommentCount).toBe(true);
+          });
+      });
+
+      test("GET responds with status 200 and array of articles filtered by author", () => {
+        return request(app)
+          .get("/api/articles?author=grumpy19")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(Array.isArray(articles)).toBe(true);
+            const allArticlesByAuthor = articles.every((article) => {
+              return article.author === "grumpy19";
+            });
+            expect(allArticlesByAuthor).toBe(true);
           });
       });
 
@@ -308,7 +374,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles[0].topic).toBe("football");
-            expect(articles.length).toBe(12);
+            expect(articles.length).toBe(10);
           });
       });
 
@@ -323,22 +389,9 @@ describe("/api", () => {
             });
           });
       });
-
-      // GOING TO COME BACK TO THIS
-      // test.only("POST responds with status 201 and new article object", () => {
-      //   return request(app)
-      //     .post("/api/articles")
-      //     .send({
-      //       title: "new title",
-      //       body: "this is the body...",
-      //       votes: 0,
-      //     })
-      //     .expect(201)
-      //     .then((response) => {});
-      // });
     });
   });
-
+  //COMMENTS
   describe("/api/comments", () => {
     describe("/api/comments/:comment_id", () => {
       test("PATCH responds with status 201 and comment updated vote count", () => {
@@ -378,7 +431,7 @@ describe("/api", () => {
           });
       });
     });
-    test.only("DELETE responds with status 404 when ID is not a number", () => {
+    test("DELETE responds with status 404 when ID is not a number", () => {
       return request(app)
         .delete("/api/comments/notanumber")
         .expect(400)
@@ -404,9 +457,4 @@ describe("/api", () => {
         });
     });
   });
-  //   describe('/api', () => {
-  //     test('GET responds with JSON object describing all the available endpoints', () => {
-
-  //   })
-  // })
 });

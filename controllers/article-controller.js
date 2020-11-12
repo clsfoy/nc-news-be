@@ -5,7 +5,8 @@ const {
   removeArticleById,
   fetchCommentsByArticleId,
   fetchAllArticles,
-  // uploadNewArticle,
+  checkArticleExists,
+  uploadNewArticle,
 } = require("../models/article-models");
 
 const getArticleById = (req, res, next) => {
@@ -14,6 +15,17 @@ const getArticleById = (req, res, next) => {
 
   fetchArticleById(articleId)
     .then((article) => {
+      if (article.length === 0) {
+        return Promise.all([article, checkArticleExists(articleId)]);
+      } else return [article, true];
+    })
+    .then(([article, articleExists]) => {
+      if (!articleExists) {
+        return Promise.reject({
+          status: 404,
+          msg: "Article not found",
+        });
+      }
       res.status(200).send({ article });
     })
     .catch(next);
@@ -71,14 +83,15 @@ const getAllArticles = (req, res, next) => {
     .catch(next);
 };
 
-//GOING TO COME BACK TO THIS
-// const postNewArticle = (req, res, next) => {
-//   const body = req.body;
+const postNewArticle = (req, res, next) => {
+  const body = req.body;
 
-//   uploadNewArticle(body).then((newArticle) => {
-//     res.status(201).send({ newArticle });
-//   });
-// };
+  uploadNewArticle(body)
+    .then((newArticle) => {
+      res.status(201).send({ newArticle });
+    })
+    .catch(next);
+};
 
 module.exports = {
   getArticleById,
@@ -87,5 +100,5 @@ module.exports = {
   deleteArticleById,
   getCommentsByArticleId,
   getAllArticles,
-  // postNewArticle,
+  postNewArticle,
 };

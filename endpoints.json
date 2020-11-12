@@ -4,24 +4,112 @@
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
-    "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+
+  "POST /api/topics": {
+    "description": "posts a new topic",
+    "exampleResponse": {
+      "newTopic": [{ "slug": "cycling", "description": "burning rubber" }]
+    }
+  },
+
+  "GET /api/users/:username": {
+    "description": "serves information specific user",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "clsfoy",
+          "avatar_url": "https://www.flickr.com/someImage3",
+          "name": "charlie foy"
+        }
+      ]
+    }
+  },
+
+  "POST /api/users": {
+    "description": "adds a new user",
+    "exampleRequest": {
+      "username": "harry3489",
+      "avatar_url": "www.google.com/images/24892",
+      "name": "harry smith"
+    }
+  },
+
   "GET /api/articles": {
     "description": "serves an array of all topics",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
+          "article_id": 4,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
-          "created_at": 1527695953341
+          "created_at": "2016-08-18T12:07:52.389Z",
+          "comment_count": 4
         }
       ]
     }
+  },
+
+  "GET /api/articles/:article_id": {
+    "description": "serves specific article",
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 7,
+          "title": "History of FC Barcelona",
+          "topic": "football",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "votes": 7,
+          "created_at": "2012-07-13T12:04:58.332Z",
+          "comment_count": 4
+        }
+      ]
+    }
+  },
+
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes a specific article"
+  },
+
+  "PATCH /api/article/:article_id": {
+    "description": "updates votes for specific article",
+    "exampleRequest": { "inc_votes": 1 }
+  },
+
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a new comment for specific article",
+    "exampleRequest": { "username": "mr360", "body": "my comment!" }
+  },
+
+  "GET /api/article/:article_id/comments": {
+    "description": "serves all comments for specific article",
+    "exampleResponse": {
+      "newComment": [
+        {
+          "comment_id": 23,
+          "body": "The owls are not what they seem.",
+          "article_id": 8,
+          "username": "icellusedkars",
+          "votes": 0,
+          "created_at": "2016-08-18T12:07:52.389Z"
+        }
+      ]
+    }
+  },
+
+  "PATCH /api/comments/:comment_id": {
+    "description": "update comment votes count",
+    "exampleRequest": { "inc_votes": 1 }
+  },
+
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes specific comment"
   }
 }

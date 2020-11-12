@@ -6,8 +6,10 @@ const {
   deleteArticleById,
   getCommentsByArticleId,
   getAllArticles,
-  // postNewArticle,
+  postNewArticle,
 } = require("../controllers/article-controller");
+
+const { send405 } = require("../controllers/error-handling");
 
 articleRouter
   .route("/:article_id")
@@ -18,9 +20,9 @@ articleRouter
 articleRouter
   .route("/:article_id/comments")
   .post(postNewComment)
-  .get(getCommentsByArticleId);
+  .get(getCommentsByArticleId)
+  .all(send405);
 
-articleRouter.route("/").get(getAllArticles);
-// .post(postNewArticle);
+articleRouter.route("/").get(getAllArticles).post(postNewArticle);
 
 module.exports = articleRouter;

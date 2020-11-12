@@ -5,7 +5,6 @@ const {
   handleServerErrors,
   handleCustomErrors,
   handlePSQLerrors,
-  send405,
   handleInvalidRoutes,
 } = require("./controllers/error-handling");
 
@@ -18,6 +17,5 @@ app.use(handleCustomErrors);
 app.use(handleInvalidRoutes);
 app.use(handlePSQLerrors);
 app.use(handleServerErrors);
-app.use(send405);
 
 module.exports = app;

@@ -22,11 +22,15 @@ const fetchArticleById = (articleId) => {
 const fetchCommentsByArticleId = (articleId, query) => {
   const sortKey = query.sort_by || "author";
   const sortOrder = query.order || "desc";
+  const limit = query.limit || "10";
+  const offset = (query.p - 1) * limit || "0";
 
   return connection("comments")
     .select("*")
     .where("article_id", "=", articleId)
-    .orderBy(sortKey, sortOrder);
+    .orderBy(sortKey, sortOrder)
+    .limit(limit)
+    .offset(offset);
 };
 
 const patchArticleById = (articleId, newVoteCount) => {
@@ -82,6 +86,8 @@ const sendNewComment = (commentToAdd, articleId) => {
 const fetchAllArticles = (query) => {
   const sortKey = query.sort_by || "created_at";
   const sortOrder = query.order || "desc";
+  const limit = query.limit || "10";
+  const offset = (query.p - 1) * limit || "0";
 
   return connection("articles")
     .select("articles.*")
@@ -89,22 +95,28 @@ const fetchAllArticles = (query) => {
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
     .orderBy(sortKey, sortOrder)
+    .limit(limit)
+    .offset(offset)
     .where((builder) => {
       if (query.author) builder.where("articles.author", "=", query.author);
       if (query.topic) builder.where("articles.topic", "=", query.topic);
     });
 };
 
-// GOING TO COME BACK TO THIS
-// const uploadNewArticle = (body) => {
-//   const newArticle = connection("articles")
-//     .insert(body)
-//     .returning("*")
-//     .then((newArticle) => {
-//       console.log(newArticle);
-//       return connection("topics").select;
-//     });
-// };
+const checkArticleExists = (articleId) => {
+  return (
+    connection("articles").where("article_id", "=", articleId),
+    then((article) => {
+      if (article.length === 0) return false;
+      else return true;
+    })
+  );
+};
+
+const uploadNewArticle = (body) => {
+  console.log(body);
+  return connection.insert(body).into("articles").returning("*");
+};
 
 module.exports = {
   fetchArticleById,
@@ -113,5 +125,6 @@ module.exports = {
   removeArticleById,
   fetchCommentsByArticleId,
   fetchAllArticles,
-  // uploadNewArticle,
+  checkArticleExists,
+  uploadNewArticle,
 };
