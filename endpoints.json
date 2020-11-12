@@ -17,7 +17,7 @@
   },
 
   "GET /api/users/:username": {
-    "description": "serves information specific user",
+    "description": "serves information on a specific user",
     "exampleResponse": {
       "users": [
         {

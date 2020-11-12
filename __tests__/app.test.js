@@ -176,7 +176,16 @@ describe("/api", () => {
         return request(app)
           .delete("/api/articles/1")
           .expect(204)
-          .then((response) => {});
+          .then(() => {
+            return connection
+              .select("*")
+              .from("articles")
+              .where("article_id", "=", "1")
+              .returning("*");
+          })
+          .then((article) => {
+            expect(article.length).toBe(0);
+          });
       });
 
       test("DELETE removes any comments with corresponding article ID", () => {
