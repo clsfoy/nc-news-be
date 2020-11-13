@@ -29,6 +29,11 @@
     }
   },
 
+  "PATCH /api/users/:username": {
+    "description": "users can update their name and avatar url, but cannot change their username",
+    "exampleRequest": { "name": "new name", "avatar_url": "www.newpicurl.com" }
+  },
+
   "POST /api/users": {
     "description": "adds a new user",
     "exampleRequest": {

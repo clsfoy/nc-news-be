@@ -105,6 +105,25 @@ describe("/api", () => {
             });
           });
       });
+
+      test.only("PATCH responds with status 200 and updated user info - username cannot be changed", () => {
+        return request(app)
+          .patch("/api/users/tickle122")
+          .send({
+            newName: "Mr Plant",
+            newAvatar:
+              "https://vignette.wikia.nocookie.net/mrmen/images/4/4f/MR_JELLY_4A.jpg/revision/latest?cb=20180104121141",
+          })
+          .expect(201)
+          .then(() => {
+            return connection("users")
+              .where("name", "=", "Mr Plant")
+              .then((user) => {
+                expect(user[0].name).toBe("Mr Plant");
+                expect(user[0].username).toBe("tickle122");
+              });
+          });
+      });
     });
   });
   //ARTICLES

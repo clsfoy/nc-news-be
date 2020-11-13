@@ -15,3 +15,15 @@ exports.fetchUserByUsername = (userName) => {
       return user;
     });
 };
+
+exports.patchUserInfo = ({ newName, newAvatar }, username) => {
+  return connection
+    .select("*")
+    .from("users")
+    .where("username", "=", username)
+    .update({ name: newName, avatar_url: newAvatar })
+    .returning("*")
+    .then((user) => {
+      return user;
+    });
+};

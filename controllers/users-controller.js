@@ -1,5 +1,5 @@
 const dbConfig = require("../knexfile");
-const { fetchUserByUsername } = require("../models/users-model");
+const { fetchUserByUsername, patchUserInfo } = require("../models/users-model");
 
 const getUserByUsername = (req, res, next) => {
   const userName = req.params.username;
@@ -10,4 +10,13 @@ const getUserByUsername = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { getUserByUsername };
+const updateUserInfo = (req, res, next) => {
+  const newUserInfo = req.body;
+  const userName = req.params.username;
+
+  patchUserInfo(newUserInfo, userName).then((updatedUserInfo) => {
+    res.status(201).send({ updatedUserInfo });
+  });
+};
+
+module.exports = { getUserByUsername, updateUserInfo };
