@@ -152,6 +152,7 @@ describe("/api", () => {
             return article.author === "grumpy19";
           });
           expect(allArticlesByAuthor).toBe(true);
+          expect(articles[0].total_count).toBe(6);
           expect(articles.length).toBe(6);
         });
     });
@@ -182,7 +183,14 @@ describe("/api", () => {
         .get("/api/articles?author=jessjelly")
         .expect(200)
         .then(({ body: { articles } }) => {
-          expect(articles[0].author).toBe("jessjelly");
+          const allArticlesByAuthor = articles.every((article) => {
+            return article.author === "jessjelly";
+          });
+          const articlesHaveTotalCount = articles.every((article) => {
+            return article.hasOwnProperty("total_count");
+          });
+          expect(allArticlesByAuthor).toBe(true);
+          expect(articlesHaveTotalCount).toBe(true);
           expect(articles.length).toBe(7);
         });
     });

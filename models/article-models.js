@@ -1,3 +1,4 @@
+const { all } = require("../app");
 const connection = require("../db/connection");
 
 const fetchArticleById = (articleId) => {
@@ -91,7 +92,7 @@ const fetchAllArticles = (query) => {
 
   return connection("articles")
     .select("articles.*")
-    .count("* as comment_count")
+    .count("articles.article_id as comment_count")
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
     .orderBy(sortKey, sortOrder)
@@ -100,6 +101,12 @@ const fetchAllArticles = (query) => {
     .where((builder) => {
       if (query.author) builder.where("articles.author", "=", query.author);
       if (query.topic) builder.where("articles.topic", "=", query.topic);
+    })
+    .then((articles) => {
+      articles.forEach((article) => {
+        article.total_count = articles.length;
+      });
+      return articles;
     });
 };
 
