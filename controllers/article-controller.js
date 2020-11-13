@@ -7,6 +7,7 @@ const {
   fetchAllArticles,
   checkArticleExists,
   uploadNewArticle,
+  getTotalArticleCount,
 } = require("../models/article-models");
 
 const getArticleById = (req, res, next) => {
@@ -75,9 +76,13 @@ const getCommentsByArticleId = (req, res, next) => {
 const getAllArticles = (req, res, next) => {
   const query = req.query;
 
-  fetchAllArticles(query)
-    .then((articles) => {
-      res.status(200).send({ articles });
+  return Promise.all([fetchAllArticles(query), getTotalArticleCount(query)])
+
+    .then(([articles, total]) => {
+      res.status(200).send({
+        articles: articles,
+        total_count: total[0].total_count,
+      });
     })
     .catch(next);
 };

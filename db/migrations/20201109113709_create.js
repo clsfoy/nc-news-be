@@ -1,14 +1,14 @@
 exports.up = function (knex) {
   return knex.schema.createTable("comments", (commentsTable) => {
     commentsTable.increments("comment_id").primary();
-    commentsTable.text("author").references("users.username");
+    commentsTable.text("author").references("users.username").notNullable();
     commentsTable
       .integer("article_id")
       .references("articles.article_id")
       .onDelete("cascade");
     commentsTable.integer("votes").defaultTo(0);
     commentsTable.timestamp("created_at").defaultTo(knex.fn.now());
-    commentsTable.text("body");
+    commentsTable.text("body").notNullable();
   });
 };
 

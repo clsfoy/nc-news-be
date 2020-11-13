@@ -14,9 +14,11 @@ const updateUserInfo = (req, res, next) => {
   const newUserInfo = req.body;
   const userName = req.params.username;
 
-  patchUserInfo(newUserInfo, userName).then((updatedUserInfo) => {
-    res.status(201).send({ updatedUserInfo });
-  });
+  patchUserInfo(newUserInfo, userName)
+    .then((updatedUserInfo) => {
+      res.status(201).send({ updatedUserInfo });
+    })
+    .catch(next);
 };
 
 module.exports = { getUserByUsername, updateUserInfo };

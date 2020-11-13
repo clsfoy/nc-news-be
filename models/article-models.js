@@ -101,12 +101,6 @@ const fetchAllArticles = (query) => {
     .where((builder) => {
       if (query.author) builder.where("articles.author", "=", query.author);
       if (query.topic) builder.where("articles.topic", "=", query.topic);
-    })
-    .then((articles) => {
-      articles.forEach((article) => {
-        article.total_count = articles.length;
-      });
-      return articles;
     });
 };
 
@@ -124,6 +118,15 @@ const uploadNewArticle = (body) => {
   return connection.insert(body).into("articles").returning("*");
 };
 
+const getTotalArticleCount = (query) => {
+  return connection("articles")
+    .count("* as total_count")
+    .where((builder) => {
+      if (query.author) builder.where("articles.author", "=", query.author);
+      if (query.topic) builder.where("articles.topic", "=", query.topic);
+    });
+};
+
 module.exports = {
   fetchArticleById,
   patchArticleById,
@@ -133,4 +136,5 @@ module.exports = {
   fetchAllArticles,
   checkArticleExists,
   uploadNewArticle,
+  getTotalArticleCount,
 };

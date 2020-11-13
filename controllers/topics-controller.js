@@ -2,9 +2,11 @@ const dbConfig = require("../knexfile");
 const { fetchAllTopics, createNewTopic } = require("../models/topics-model");
 
 const getAllTopics = (req, res, next) => {
-  fetchAllTopics().then((topics) => {
-    res.status(200).send({ topics });
-  });
+  fetchAllTopics()
+    .then((topics) => {
+      res.status(200).send({ topics });
+    })
+    .catch(next);
 };
 
 const addNewTopic = (req, res, next) => {

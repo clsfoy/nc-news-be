@@ -6,9 +6,11 @@ const {
 const updateCommentVoteById = (req, res, next) => {
   const newVoteCount = req.body.inc_votes;
   const commentId = req.params.comment_id;
-  patchCommentVoteById(newVoteCount, commentId).then((updatedComment) => {
-    res.status(201).send({ updatedComment });
-  });
+  patchCommentVoteById(newVoteCount, commentId)
+    .then((updatedComment) => {
+      res.status(201).send({ updatedComment });
+    })
+    .catch(next);
 };
 
 const deleteCommentById = (req, res, next) => {

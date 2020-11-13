@@ -17,7 +17,7 @@ describe("/api", () => {
       .expect(200)
       .then(({ body: { apiEndPoints } }) => {
         const totalEndPoints = Object.keys(apiEndPoints).length;
-        expect(totalEndPoints).toBe(13);
+        expect(totalEndPoints).toBe(14);
         expect(apiEndPoints).toEqual(expect.any(Object));
       });
   });
@@ -106,7 +106,7 @@ describe("/api", () => {
           });
       });
 
-      test.only("PATCH responds with status 200 and updated user info - username cannot be changed", () => {
+      test("PATCH responds with status 200 and updated user info - username cannot be changed", () => {
         return request(app)
           .patch("/api/users/tickle122")
           .send({
@@ -165,14 +165,11 @@ describe("/api", () => {
       return request(app)
         .get("/api/articles?author=grumpy19")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(Array.isArray(articles)).toBe(true);
-          const allArticlesByAuthor = articles.every((article) => {
-            return article.author === "grumpy19";
-          });
-          expect(allArticlesByAuthor).toBe(true);
-          expect(articles[0].total_count).toBe(6);
-          expect(articles.length).toBe(6);
+        .then((response) => {
+          expect(Array.isArray(response.body.articles)).toBe(true);
+          expect(response.body.articles[0].author).toBe("grumpy19");
+          expect(response.body.total_count).toBe("6");
+          expect(response.body.articles.length).toBe(6);
         });
     });
 
@@ -205,11 +202,7 @@ describe("/api", () => {
           const allArticlesByAuthor = articles.every((article) => {
             return article.author === "jessjelly";
           });
-          const articlesHaveTotalCount = articles.every((article) => {
-            return article.hasOwnProperty("total_count");
-          });
           expect(allArticlesByAuthor).toBe(true);
-          expect(articlesHaveTotalCount).toBe(true);
           expect(articles.length).toBe(7);
         });
     });
