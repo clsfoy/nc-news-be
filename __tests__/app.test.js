@@ -17,7 +17,7 @@ describe("/api", () => {
       .expect(200)
       .then(({ body: { apiEndPoints } }) => {
         const totalEndPoints = Object.keys(apiEndPoints).length;
-        expect(totalEndPoints).toBe(14);
+        expect(totalEndPoints).toBe(15);
         expect(apiEndPoints).toEqual(expect.any(Object));
       });
   });
@@ -77,6 +77,16 @@ describe("/api", () => {
           expect(body.msg).toBe("Oops...invalid method");
         });
     });
+  });
+
+  test("GET responds with status 200 and all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((res) => {
+        expect(Array.isArray(res.body.users)).toBe(true);
+        expect(res.body.users.length).toBe(6);
+      });
   });
 
   describe("/api/users/:username", () => {
@@ -158,7 +168,7 @@ describe("/api", () => {
         });
     });
 
-    test.only("GET responds with status 200 and array of articles filtered by author", () => {
+    test("GET responds with status 200 and array of articles filtered by author", () => {
       return request(app)
         .get("/api/articles?author=grumpy19")
         .expect(200)

@@ -16,6 +16,10 @@ exports.fetchUserByUsername = (userName) => {
     });
 };
 
+exports.fetchAllUsers = () => {
+  return connection.select("*").from("users");
+};
+
 exports.patchUserInfo = ({ newName, newAvatar }, username) => {
   return connection
     .select("*")
