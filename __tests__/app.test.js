@@ -158,7 +158,7 @@ describe("/api", () => {
         });
     });
 
-    test("GET responds with status 200 and array of articles filtered by author", () => {
+    test.only("GET responds with status 200 and array of articles filtered by author", () => {
       return request(app)
         .get("/api/articles?author=grumpy19")
         .expect(200)
