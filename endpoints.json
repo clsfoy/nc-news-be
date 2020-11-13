@@ -3,8 +3,7 @@
     "": "Here are some quick links for exploring the API. More detailed descriptions of the ways you can interact with the API are listed below!",
     "articles": "https://is-this-reddit.herokuapp.com/api/articles",
     "topics": "https://is-this-reddit.herokuapp.com/api/topics",
-    "users": "https://is-this-reddit.herokuapp.com/api/users",
-    "comments": "https://is-this-reddit.herokuapp.com/api/comments"
+    "users": "https://is-this-reddit.herokuapp.com/api/users"
   },
 
   "GET /api": {
