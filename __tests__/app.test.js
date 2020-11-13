@@ -69,63 +69,60 @@ describe("/api", () => {
   });
   //USERS
   describe("api/users", () => {
-    test("INVALID METHODS respond with status 405", () => {
-      const methods = ["delete", "patch"];
-      const requestPromises = methods.map((method) => {
-        return request(app)
-          [method]("/api/users/weegembump")
-          .expect(405)
-          .then(({ body }) => {
-            expect(body.msg).toBe("Oops...invalid method");
-          });
-      });
-      return Promise.all(requestPromises);
-    });
-
-    describe("/api/users/:username", () => {
-      test("GET responds with a specific user object and status 200", () => {
-        return request(app)
-          .get("/api/users/tickle122")
-          .expect(200)
-          .then(({ body: { user } }) => {
-            expect(user[0].name).toBe("Tom Tickle");
-            expect(user[0]).toHaveProperty("avatar_url");
-            expect(user[0]).toHaveProperty("username");
-            expect(user[0]).toHaveProperty("name");
-          });
-      });
-      test("GET responds with 404 not found when passed a non-existing username", () => {
-        return request(app)
-          .get("/api/users/notAUser")
-          .expect(404)
-          .then((response) => {
-            expect(response.body).toEqual({
-              status: 404,
-              msg: "User not found",
-            });
-          });
-      });
-
-      test("PATCH responds with status 200 and updated user info - username cannot be changed", () => {
-        return request(app)
-          .patch("/api/users/tickle122")
-          .send({
-            newName: "Mr Plant",
-            newAvatar:
-              "https://vignette.wikia.nocookie.net/mrmen/images/4/4f/MR_JELLY_4A.jpg/revision/latest?cb=20180104121141",
-          })
-          .expect(201)
-          .then(() => {
-            return connection("users")
-              .where("name", "=", "Mr Plant")
-              .then((user) => {
-                expect(user[0].name).toBe("Mr Plant");
-                expect(user[0].username).toBe("tickle122");
-              });
-          });
-      });
+    test("DELETE repsonds with 405 invalid method", () => {
+      return request(app)
+        .delete("/api/users/weegembump")
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Oops...invalid method");
+        });
     });
   });
+
+  describe("/api/users/:username", () => {
+    test("GET responds with a specific user object and status 200", () => {
+      return request(app)
+        .get("/api/users/tickle122")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user[0].name).toBe("Tom Tickle");
+          expect(user[0]).toHaveProperty("avatar_url");
+          expect(user[0]).toHaveProperty("username");
+          expect(user[0]).toHaveProperty("name");
+        });
+    });
+    test("GET responds with 404 not found when passed a non-existing username", () => {
+      return request(app)
+        .get("/api/users/notAUser")
+        .expect(404)
+        .then((response) => {
+          expect(response.body).toEqual({
+            status: 404,
+            msg: "User not found",
+          });
+        });
+    });
+
+    test("PATCH responds with status 200 and updated user info - username cannot be changed", () => {
+      return request(app)
+        .patch("/api/users/tickle122")
+        .send({
+          newName: "Mr Plant",
+          newAvatar:
+            "https://vignette.wikia.nocookie.net/mrmen/images/4/4f/MR_JELLY_4A.jpg/revision/latest?cb=20180104121141",
+        })
+        .expect(201)
+        .then(() => {
+          return connection("users")
+            .where("name", "=", "Mr Plant")
+            .then((user) => {
+              expect(user[0].name).toBe("Mr Plant");
+              expect(user[0].username).toBe("tickle122");
+            });
+        });
+    });
+  });
+
   //ARTICLES
   describe("/api/articles", () => {
     test("GET responds with status 200 and array of article objects sorted by date", () => {
@@ -235,6 +232,7 @@ describe("/api", () => {
         .send({
           title: "liverpools injury problems",
           body: "it's all going downhill!",
+          topic: "football",
           author: "tickle122",
           votes: 0,
         })
