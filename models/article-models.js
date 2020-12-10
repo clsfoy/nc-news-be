@@ -92,7 +92,7 @@ const fetchAllArticles = (query) => {
 
   return connection("articles")
     .select("articles.*")
-    .count("articles.article_id as comment_count")
+    .count("comment_id as comment_count")
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
     .orderBy(sortKey, sortOrder)

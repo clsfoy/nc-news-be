@@ -236,7 +236,7 @@ describe("/api", () => {
         });
     });
 
-    test("POST responds with status 201 and new article object", () => {
+    test.only("POST responds with status 201 and new article object", () => {
       return request(app)
         .post("/api/articles")
         .send({
@@ -244,7 +244,6 @@ describe("/api", () => {
           body: "it's all going downhill!",
           topic: "football",
           author: "tickle122",
-          votes: 0,
         })
         .expect(201)
         .then(({ body: { newArticle } }) => {
