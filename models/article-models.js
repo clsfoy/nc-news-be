@@ -4,7 +4,7 @@ const connection = require("../db/connection");
 const fetchArticleById = (articleId) => {
   return connection("articles")
     .select("articles.*")
-    .count("* as comment_count")
+    .count("comment_id as comment_count")
     .where("articles.article_id", "=", articleId)
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
